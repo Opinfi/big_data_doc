@@ -1,0 +1,13 @@
+<!-- Nuevos datos registrados -->
+{% extends 'principal.html' %}
+
+{% block scripts %}
+	<script src="{{ url_for('static', filename='js/mensajes_de_error.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+  <h1><strong>Error: </strong><label style="color:#FF0000">{{encabezado}}</label></h1>
+  <p>Causa: {{mensaje}}</p>
+  <br />
+  <button onclick="volver()" id="btn_regresar" class="custom-button">Regresar</button>
+{% endblock %}

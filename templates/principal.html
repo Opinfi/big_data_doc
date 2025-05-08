@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link id="favicon" rel="icon" type="image/png" href="{{url_for('static', filename='img/favicon.png')}}">
+    <title>BIG DATA Documents</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: Helvetica, Arial, sans-serif;
+			color: black;
+			background:#caf0f8; 
+			font-size: 1em;
+			line-height: 1.5em;
+			padding-top: 70px; /* Relleno superior igual a la altura de la cabecera*/
+			padding-bottom: 80px;  /*Relleno inferior igual a la altura del pie o footer*/ 
+		}
+		h1 {
+			font-size: 1.8em;
+			line-height: 1.3em;
+			margin: 15px 0;
+			text-align: center;
+			font-weight: 300;
+		}
+		h2 {
+			font-size: 1.2em;
+			line-height: 1.3em;
+			margin: 15px 0;
+			text-align: center;
+			font-weight: 300;
+			color:#03045e;
+		}
+		p {
+			margin: 0 0 1.5em 0;
+		}
+		/*Estas lineas de CSS las usaremos para dar estilo a la cabecera:*/
+		#cabecera {
+			background:#00b4d8;
+			color: white;
+			height: 70px;
+			
+			width: 100%; /* hacemos que la cabecera ocupe el ancho completo de la pagina */
+			left: 0; /* Posicionamos la cabecera al lado izquierdo */
+			top: 0; /* Posicionamos la cabecera pegada arriba */
+			position: fixed; /* Hacemos que la cabecera tenga una posicion*/
+			z-index: 100000;
+			
+			-moz-border-radius: 10px;
+			-webkit-border-radius: 10px;
+			border-radius: 10px;
+		}	
+		#cabecera a {
+			color: black;
+		}
+		/*
+		 * Logo
+		 */
+		#logo-header {
+			float: left;
+			padding-left: 10;
+			/*padding: 15px 0 0 20px;*/
+			text-decoration: none;
+		}
+		#logo-header:hover {
+			color: #caf0f8;
+		}	
+		#logo-header .site-name {
+			display: block;
+			font-weight: 700;
+			font-size: 1.2em;
+		}	
+		#logo-header .site-desc {
+			display: block;
+			font-weight: 300;
+			font-size: 1em;
+			color:#0077b6;
+		}
+		#img_user {
+			 border-style:solid;
+			 border-color:#03045e;
+			 border-width:2px;
+			 
+			 
+			 height:50px;
+			 width:auto;
+			 
+			 -moz-box-shadow: rgba(0,0,0,0.5) 5px 5px 10px;
+			 -webkit-box-shadow: rgba(0,0,0,0.5) 5px 5px 10px;
+			 box-shadow: rgba(0,0,0,0.5) 5px 5px 10px;
+			 
+			 -moz-border-radius: 50%;
+			 -webkit-border-radius: 50%;
+			 border-radius: 50%;
+		}
+		/*
+		 * Navegacion
+		 */
+		nav {
+			float: right;
+		}
+		nav ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			padding-right: 20px;
+		}	
+		#cabecera nav ul li {
+			display: inline-block;
+			line-height: 60px;
+		}			
+		#cabecera ul li a {
+			display: block;
+			padding: 0 10px;
+			text-decoration: none;
+		}			
+		#cabecera nav ul li a:hover {
+			background:#03045e;
+			color:#caf0f8;
+			-moz-border-radius: 10px;
+			-webkit-border-radius: 10px;
+			border-radius: 10px;
+		}
+		/*Con estos estilos aplicaremos diseno al contenido:*/
+		#seccion {
+			background:#caf0f8;
+			width: 98%;
+			/*max-width: 800px;*/
+			margin: 10px auto;
+			box-shadow: 0 0 10px rgba(0,0,0,.1);
+			padding: 10px;
+		}
+		#seccion header,
+		#seccion .content {
+			padding: 10px;
+		}
+		/*Y por ultimo, con esto estilizaremos el pie de pagina:*/
+		#pie {
+			background: #00b4d8;
+			color: black;
+			text-align: center;
+			width: 100%;
+			
+			-moz-border-radius: 10px;
+			-webkit-border-radius: 10px;
+			border-radius: 10px;
+			bottom: 0;
+			position: fixed;
+		}
+		#pie p {
+			margin: 0;
+		}	
+		#pie a {
+			color: white;
+		}
+		/* Estilo para los botones del sistema, menos el de seleccion de archivos*/
+		.custom-button {
+			color: black;
+			background-color: #90e0ef;
+			padding: 2px 5px;
+			font-size: 16px;
+			font-family: Helvetica, Arial, sans-serif;
+			border-radius: 5px;
+			box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Sombra inferior y derecha */
+    		transition: box-shadow 0.3s ease; /* Transición suave para el efecto hover */
+			cursor: pointer; /* Cambia el cursor a una mano señalando */
+		}
+		.custom-button:hover {
+			color: aliceblue;
+			background-color: #0077b6;
+			box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Reduce la sombra al hacer hover */
+		}
+		/* Estilo para el botón cuando está deshabilitado */
+		.custom-button:disabled {
+			color: #888; /* Color gris para el texto cuando está deshabilitado */
+			background-color: #ccc; /* Fondo gris para el botón deshabilitado */
+			cursor: not-allowed; /* Cambia el cursor a "no permitido" */
+			box-shadow: none; /* Elimina la sombra cuando está deshabilitado */
+		}
+		/* Estilo para el menú de selección */
+		.lista_seleccion {
+			background-color: #90E0EF; /* Cambia este valor al color que desees */
+			color: #000; /* Color del texto */
+			border: 1px solid #ccc; /* Borde del menú */
+			border-radius: 5px; /* Bordes redondeados */
+			padding: 5px; /* Espaciado interno */
+			font-size: 14px; /* Tamaño de la fuente */
+			cursor: pointer; /* Cambia el cursor a una mano señalando */
+		}
+
+		/* Estilo para las opciones del menú de selección */
+		.lista_seleccion option {
+			background-color: #90E0EF; /* Fondo de las opciones */
+			color: #000; /* Color del texto de las opciones */
+		}
+		/* Estilos para los botones redondos */
+		.boton-redondo {
+			display: flex;
+			justify-content: center; /* Centra el texto horizontalmente */
+			align-items: center; /* Centra el texto verticalmente */
+			width: 150px; /* Tamaño del botón */
+			height: 150px; /* Tamaño del botón */
+			border-radius: 50%; /* Hace el botón redondo */
+			background-color: #0077b6; /* Color de fondo */
+			color: white; /* Color del texto */
+			font-size: 20px; /* Reducir el tamaño de la fuente */
+			font-family: Helvetica, Arial, sans-serif;
+			font-weight: bold;
+			text-align: center;
+			text-decoration: none; /* Quita el subrayado del texto */
+			margin: 20px; /* Espacio entre los botones */
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Sombra para un efecto 3D */
+			transition: all 0.3s ease; /* Transición suave para efectos hover */
+			cursor: pointer; /* Cambia el cursor a una mano señalando */
+			padding: 10px; /* Añadir padding para que el texto no esté pegado al borde */
+		}
+		/* Efecto hover para los botones */
+		.boton-redondo:hover {
+			background-color: #03045e; /* Cambia el color de fondo al pasar el mouse */
+			transform: scale(1.1); /* Aumenta ligeramente el tamaño del botón */
+			box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4); /* Aumenta la sombra */
+		}
+		/* Contenedor para centrar los botones */
+		.contenedor-botones {
+			display: flex;
+			justify-content: center; /* Centra los botones horizontalmente */
+			align-items: center; /* Centra los botones verticalmente */
+			margin-top: 50px; /* Espacio superior */
+		}
+		/* Estilos para el texto atractivo */
+		.texto-llamativo {
+			font-family: 'Poppins', sans-serif; /* Fuente moderna */
+			font-size: 24px; /* Tamaño de fuente grande */
+			font-weight: 600; /* Texto en negrita */
+			text-align: center; /* Centrar el texto */
+			margin: 30px auto; /* Espaciado exterior */
+			max-width: 800px; /* Ancho máximo para mejor legibilidad */
+			line-height: 1.6; /* Espaciado entre líneas */
+			color: transparent; /* Texto transparente para el gradiente */
+			background: linear-gradient(90deg, #0077b6, #03045e); /* Gradiente de colores */
+			-webkit-background-clip: text; /* Aplicar gradiente al texto */
+			background-clip: text;
+			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Sombra de texto */
+			animation: fadeIn 2s ease-in-out; /* Animación de entrada */
+		}
+		/* Animación de fade-in */
+		@keyframes fadeIn {
+			0% {
+				opacity: 0;
+				transform: translateY(20px);
+			}
+			100% {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+		/* Estilo para el contenedor principal de seleccion de archivo*/
+		.file-upload-container {
+			display: flex;
+			align-items: center;
+			gap: 10px; /* Espacio entre el botón y el texto */
+			position: relative;
+    		z-index: 9999; /* Asegura que el tooltip esté por encima */
+		}
+		/* Oculta el input de archivo original */
+		input[type="file"] {
+			display: none;
+		}
+		/* Estilo para el botón personalizado */
+		.custom-file-upload {
+			display: inline-block;
+			padding: 2px 5px;
+			background-color: #90e0ef; /* Color de fondo */
+			color: black; /* Color del texto */
+			cursor: pointer;
+			border-radius: 5px;
+			font-size: 16px;
+			font-family: Helvetica, Arial, sans-serif;
+			box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Sombra inferior y derecha */
+    		transition: box-shadow 0.3s ease; /* Transición suave para el efecto hover */
+			/*border: 2px solid black;  Borde negro de 2px de grosor */
+		}
+		/* Cambia el color de fondo al pasar el mouse */
+		.custom-file-upload:hover {
+			color:aliceblue;
+			background-color: #0077b6;
+			box-shadow: 1px 1x 2px rgba(0, 0, 0, 0.5); /* Reduce la sombra al hacer hover */
+		}
+		/* Estilo para el texto del nombre del archivo */
+		#file-name {
+			font-size: 14px;
+			color: #555;
+		}
+		/* Diálogos personalizados */
+		.dialog-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			z-index: 10000;
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.3s ease;
+		}
+		.dialog-overlay.active {
+			opacity: 1;
+			visibility: visible;
+		}
+		.dialog-box {
+			/*background: white;*/
+			border-radius: 8px;
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+			width: 90%;
+			max-width: 400px;
+			overflow: hidden;
+			transform: scale(0.9);
+			transition: transform 0.3s ease;
+		}
+		.dialog-overlay.active .dialog-box {
+			transform: scale(1);
+		}
+		.dialog-header {
+			/*background: #0077b6;*/
+			color: white;
+			padding: 15px 20px;
+			font-weight: bold;
+			font-size: 18px;
+		}
+		.dialog-body {
+			padding: 20px;
+			max-height: 60vh;
+			overflow-y: auto;
+			word-wrap: break-word;
+		}
+		.dialog-footer {
+			padding: 15px 20px;
+			display: flex;
+			justify-content: flex-end;
+			gap: 10px;
+			/*background: #f5f5f5;*/
+		}
+		
+		.dialog-btn {
+			padding: 8px 16px;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-weight: 500;
+			transition: background 0.2s;
+		}
+		.dialog-btn-primary {
+			background: #0077b6;
+			color: white;
+		}
+		.dialog-btn-primary:hover {
+			background: #03045e;
+		}
+		.dialog-btn-secondary {
+			background: #e0e0e0;
+			color: #333;
+		}
+		.dialog-btn-secondary:hover {
+			background: #bdbdbd;
+		}
+	</style>
+	{% if not Start %}
+		{% block styles %}{% endblock %}
+	{% endif %}
+	{% if not Start %}
+		{% block scripts %}{% endblock %}
+		<script src="{{ url_for('static', filename='js/principal.js') }}"></script>
+	{% else %}
+		<script src="{{ url_for('static', filename='js/principal.js') }}"></script>
+	{% endif %}
+</head>
+<body>
+	<header id="cabecera">
+		<table width="100%" align="center">
+			<tr>
+				<td width="32%" valign="middle">
+					<a id="logo-header" href="/">
+						<span class="site-name">BIG DATA Documents</span>
+						<span class="site-desc">Universidad Internacional de La Rioja</span>
+					</a> <!-- / #logo-header -->				
+				</td>
+				<td width="12%" valign="middle">
+					<div id="usuario_actual">
+						<div style="float:left">
+							{% if username == '' %}
+								<abbr title="No hay usuario activo!">
+								<img id="img_user" src="{{url_for('static', filename='img/anonimo_blue.png')}}">
+								</abbr>
+							{% else %}
+								<abbr title="{{username}}">
+								<img id="img_user" src="{{url_for('static', filename=url_foto)}}">
+								</abbr>
+							{% endif %}
+						</div>
+						<div style="float:left">
+							&nbsp;&nbsp;&nbsp;
+						</div>
+						<div style="float:left">
+							{% if username == '' %}
+								<a href="/login" onClick="">Acceder</a>
+							{% else %}
+								<a href="/logout" onClick="">Salir</a>
+							{% endif %}
+						</div>
+					</div>
+			  </td>				
+				<td width="56%" valign="middle">
+					<nav>
+						<ul>
+							{% if tipo_usuario == 'administrador' %}
+								<li><a href="/administrar">Administrar</a></li>
+							{% endif %}
+							{% if tipo_usuario == 'gestor_informes' %}
+								<li><a href="/plantillas_kpi">Plantillas KPI</a></li>
+								<li><a href="/modelos">Mis Modelos</a></li>
+								<li><a href="/ejecutar_kpi">Ejecutar Informe KPI</a></li>
+							{% endif %}
+							<li><a href="/about">Acerca de</a></li>
+						</ul>
+					</nav>
+			  </td>
+			</tr>
+	  </table>
+	</header>
+	<section id="seccion">
+		<article id="articulo">
+			{% if not Start %}
+			{% block content %}{% endblock %}
+				<!-- Diálogos personalizados -->
+				<div id="customAlertOverlay" class="dialog-overlay">
+					<div class="dialog-box" style="background-color: #f0a3a3;">
+						<div class="dialog-header" style="background: #f02929;">Alerta</div>
+						<div id="customAlertBody" class="dialog-body"></div>
+						<div class="dialog-footer" style="background: #ec6e6e;">
+							<button onclick="hideAlert()" class="dialog-btn dialog-btn-primary">Aceptar</button>
+						</div>
+					</div>
+				</div>
+				<div id="customConfirmOverlay" class="dialog-overlay">
+					<div class="dialog-box" style="background-color: #90e0ef;">
+						<div class="dialog-header" style="background: #0077b6;">Confirmación</div>
+						<div id="customConfirmBody" class="dialog-body"></div>
+						<div class="dialog-footer" style="background: #00b4d8;">
+							<button onclick="handleConfirm(false)" class="dialog-btn dialog-btn-secondary">Cancelar</button>
+							<button onclick="handleConfirm(true)" class="dialog-btn dialog-btn-primary">Aceptar</button>
+						</div>
+					</div>
+				</div>
+			{% else %}
+				<div align="center">
+					<h1>Sistema Big Data Documents</h1>
+					<!-- Contenedor para los botones -->
+					<div class="contenedor-botones">
+						<a href="/login" class="boton-redondo">Acceda!</a>
+						<a href="/registrarse" class="boton-redondo">Regístrese!</a>
+					</div>
+					<p class="texto-llamativo">
+						{{texto_inicial}}
+					</p>
+				</div>
+			{% endif %}
+		</article>
+	</section>
+	<footer id="pie">
+		<div align="center">
+			<table width="100%">
+				<tr>
+					<td>
+						Derechos Reservados &copy; 2025
+					</td>
+					<td align="right">
+						Webmaster (Oswaldo Wiston Pin Figueroa)
+					</td>
+				</tr>
+			</table>
+		</div>
+	</footer>
+</body>
+</html>

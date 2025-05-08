@@ -1,0 +1,22 @@
+<!-- Inicio de las principales acciones del usuario autenticado -->
+{% extends 'principal.html' %}
+
+{% block styles %}
+    <style>
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div align="center">
+        <h1>Comenzemos!</h1>
+        <!-- Contenedor para los botones inferiores -->
+        <div class="contenedor-botones">
+            <a href="/plantillas_kpi" class="boton-redondo">Ingrese una<br>Plantilla KPI</a>
+            <a href="/modelos/0" class="boton-redondo">Haga un<br>Nuevo Modelo KPI</a>
+            <a href="/ejecutar_kpi" class="boton-redondo">Genere un<br>Informe KPI!</a>
+        </div>
+        <p class="texto-llamativo">
+            {{texto_inicial}}
+        </p>
+    </div>
+{% endblock %}

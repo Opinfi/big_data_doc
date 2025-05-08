@@ -1,0 +1,327 @@
+<!-- Nuevos datos registrados -->
+{% extends 'principal.html' %}
+
+{% block scripts %}
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>  
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.css">
+	<script src="{{ url_for('static', filename='js/modelos.js') }}"></script>
+	<script src="https://www.lactame.com/lib/ml/6.0.0/ml.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+	<script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+{% endblock %}
+
+{% block styles %}
+	<style>
+		body {  
+			font-family: Arial, sans-serif;  
+		}  
+		#toolbar {  
+			margin-bottom: 5px;  
+		}  
+		.tool_view {
+			display: inline-block;
+			border: 1px solid #000;  
+			border-radius: 5px;  
+			padding: 5px;  
+			margin: 2px; 
+			cursor: pointer;  
+			position: relative;
+		}
+		.tool {  
+			border: 1px solid #000;  
+			border-radius: 5px;  
+			padding: 5px;  
+			margin: 2px;  
+			display: none;
+			cursor: pointer;  
+			position: relative;  
+		}  
+		.tool i {
+			font-size: 16px; /* Tamaño de los íconos de FontAwesome */
+			color: #000; /* Color de los íconos */
+		}
+		.element {
+			border: 2px solid #635b5b;
+			border-radius: 5px;
+			padding: 10px;
+			margin: 5px;
+			display: inline-block;
+			cursor: pointer;
+			position: absolute;
+			z-index: 50;
+			background-color: #CCFFFF;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.element i {
+			font-size: 28px; /* Tamaño de los íconos dentro de los elementos */
+			color: #000;
+		}
+		#workflow-container {
+			width: 100%;  
+			height: 600px;  
+			border: 1px solid #ccc;  
+			position: relative;
+			user-select: none; /* Evita la selección de texto */  
+		}  
+		#connection-svg {  
+			position: absolute;  
+			top: 0;
+			left: 0;
+			pointer-events: none;
+			z-index: 0;  /* Asegurate de que el SVG este detras de los elementos */
+		}
+		.context-menu {  
+			display: none;  
+			position: absolute;  
+			border: 1px solid #524e4e;
+			background: white;  
+			z-index: 1000;
+		}  
+		.context-menu ul {  
+			list-style-type: none;  
+			padding: 0;  
+		}  
+		.context-menu li {  
+			padding: 2px 8px;  
+			cursor: pointer;  
+		}  
+		.context-menu li:hover {  
+			background-color: #caf0f8; 
+		}
+		.tooltip {  
+            position: relative;  
+            display: inline-block;  
+            cursor: pointer; /* Muestra que el elemento es interactivo */
+        }
+		.tooltip .tooltiptext {
+            visibility: hidden;  
+            width: auto;  
+            background-color:#FFFF00;
+            color: #000;
+            text-align:left;  
+            border-radius: 5px;
+			border: 1px solid #000;  
+            padding: 5px;  
+            position: absolute;  
+            z-index: 100;  
+            top: 40px; /* Posicion por debajo del elemento */  
+            left: 50%;  
+            margin-left: 0px; /* Centrar el tooltip */  
+            opacity: 0; /* Comienza invisible */  
+            transition: opacity 0.3s; /* Transicion suave */
+        }
+		.tooltip:hover .tooltiptext {  
+            visibility: visible;  
+            opacity: 1; /* Hacer visible al pasar el mouse */  
+        }
+		.tooltip_absolute {  
+            position: absolute;  
+            display: inline-block;  
+            cursor: pointer; /* Muestra que el elemento es interactivo */
+        }
+        .tooltip_absolute .tooltiptext_absolute {
+            visibility: hidden;  
+            width: auto;  
+            background-color:#FFFF00;
+            color: #000;
+            text-align:left;  
+            border-radius: 5px;
+			border: 1px solid #000;  
+            padding: 5px;  
+            position: absolute;  
+            z-index: 10000;  
+            top: 40px; /* Posicion por debajo del elemento */  
+            left: 50%;  
+            margin-left: 0px; /* Centrar el tooltip */  
+            opacity: 0; /* Comienza invisible */  
+            transition: opacity 0.3s; /* Transicion suave */
+        }
+        .tooltip_absolute:hover .tooltiptext_absolute {  
+            visibility: visible;  
+            opacity: 1; /* Hacer visible al pasar el mouse */  
+        }
+		.tooltip_absolute .tooltiptext_absolute ol {
+			margin: 0; /* Eliminar el margen predeterminado */
+			padding-left: 20px; /* Ajustar el espacio de la sangría */
+		}
+		.disabled-dialog {
+			opacity: 0.75; /* Hacer el diálogo semi-transparente */
+			pointer-events: none; /* Deshabilitar interacción */
+		}
+		.dialogo-container {
+			position: absolute;  
+			top: 50%;  
+			left: 50%;  
+			transform: translate(-50%, -50%);  
+			background-color: #caf0f8;  
+			border: 2px solid #02212e;  
+			padding: 10px;  
+			z-index: 1000;  
+			display: block; /* Mostrar por defecto */  
+		}
+		.contenedor_opt_columnas {
+			max-height: 200px; /* Establece la altura maxima deseada */
+			overflow-y: scroll; /* Agrega el scroll vertical */
+		}
+		/* Estilos para el spinner y el overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1001;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+	</style>
+{% endblock %}
+  
+{% block content %}
+	<div id="toolbar">
+		<div class="tool tooltip" data-type="Documento"><i class="fa-regular fa-file"></i>
+			<span class="tooltiptext">A&ntilde;adir un documento que contenga tablas de miles o millones de filas (megadatos o <em>Big data</em>), localmente o en Internet</span>
+		</div>
+		<div class="tool tooltip" data-type="Limpieza"><i class="fa-regular fa-pen-to-square"></i>
+			<span class="tooltiptext">Aplicar depuraci&oacute;n a los datos, como quitar duplicados, filtrar filas bajo una condici&oacute;n, restaurar datos corruptos</span>
+		</div>
+		<div class="tool tooltip" data-type="Conversion"><i class="fa-solid fa-right-left"></i>
+			<span class="tooltiptext">Aplicar agrupamiento u ordenar filas, conversiones de tipos como codificar columnas de categor&iacute;as a num&eacute;ricas o viceversa (<em>Binning</em>)</span>
+		</div>
+		<div class="tool tooltip" data-type="Procesamiento"><i class="fa-solid fa-gear"></i>
+			<span class="tooltiptext">Procesar una o m&aacute;s columnas con estad&iacute;stica descriptiva, Predicci&oacute;n por Regresi&oacute;n (<em>forecasting</em>) o Clasificaci&oacute;n predictiva por Aprendizaje autom&aacute;tico</span>
+		</div>
+		<div class="tool tooltip" data-type="Grafico"><i class="fa-regular fa-chart-bar"></i>
+			<span class="tooltiptext">Insertar gr&aacute;ficos de diversos tipos, relacionando una o m&aacute;s columnas</span>
+		</div>
+		<div class="tool tooltip" data-type="InformeKPI"><i class="fa-regular fa-file-lines"></i>
+			<span class="tooltiptext">Insertar Plantilla de informe KPI (KPI: Key Performance Indicators) con uno o m&aacute;s gr&aacute;ficos y datos asociados</span>
+		</div>
+		<div class="tool tooltip" data-type="Nombre_modelo"><i>Nombre: <input type="text" value="" size="25" onkeypress="return valideKey(event)" id="nombre_modelo" disabled="disabled" /></i>
+			<span class="tooltiptext">Debe especificar un nombre o denominaci&oacute;n &uacute;nica a su modelo KPI (10 caracteres m&iacute;nimo)</span>
+		</div>
+		<div class="tool tooltip" data-type="Salvar_cambios"><i><input type="button" onClick="Salvar_modelo()" class="custom-button" value="Salvar cambios" disabled="disabled" id="btn_salvarmodelo" /></i>
+			<span class="tooltiptext">Todo el modelo dise&ntilde;ado es archivado en el sistema a su cuenta. Otros colegas pueden solamente ejecutarlo</span>
+		</div>
+		<div class="tool_view tooltip" data-type="mis_modelos"><i>Editar mi modelo:
+			<select id="lista_modelos" class="lista_seleccion">
+				{{lista_modelos}}
+			</select></i>
+			<span class="tooltiptext">Elija uno de sus modelos desarrollados para modificar alguna parte de su flujo de procesamiento. Tambi&eacute;n puede crear uno nuevo</span>
+		</div>
+	</div>  
+	
+	<div id="workflow-container">  
+		<svg id="connection-svg" height="600" width="100%" xmlns="http://www.w3.org/2000/svg">
+		</svg>
+	</div>  
+	
+	<div id="context-menu-documento" class="context-menu">
+	  <ul>
+		<li id="Leer_pc">Leer desde PC local</li>
+		<li id="Leer_url">Leer desde una URL</li>
+		<li id="delete">Eliminar</li>
+	  </ul>
+	</div>
+	
+	<div id="context-menu-limpieza" class="context-menu">
+	  <ul>
+		<li id="Quitar_duplicados">Quitar duplicados</li>
+		<!--li id="Estimar_nulos">Estimar valores nulos</li>
+		<li id="Eliminar_filas_con_nulos">Eliminar filas con valores nulos</li-->
+		<li id="Eliminar_filasfcond">Filtrar filas condicionalmente</li>
+		<li id="Recuperar_num_corruptos">Recuperar n&uacute;meros corruptos (ej: 2021?, 45.67!, 89abc)</li>
+		<li id="Exportar_tabla">Exportar tabla resultante</li>
+		<li id="delete">Eliminar</li>
+	  </ul>
+	</div>
+	
+	<div id="context-menu-conversion" class="context-menu">
+	  <ul>
+		<li id="Agrupar_filas">Agrupar filas</li>
+		<li id="Ordenar_filas">Ordenar filas</li>
+		<!--li id="Convertir_str_fecha">Convertir texto a fecha</li>
+		<li id="Convertir_str_numero">Convertir texto a n&uacute;mero</li>
+		<li id="Codificar_var_categoricas">Codificar variables categ&oacute;ricas</li>
+		<li id="Bining">Aplicar <em>Binning</em></li-->
+		<li id="Exportar_tabla">Exportar tabla resultante</li>
+		<li id="delete">Eliminar</li>
+	  </ul>
+	</div>
+	
+	<div id="context-menu-procesamiento" class="context-menu">
+	  <ul>
+		<li id="Estadistica_descriptiva">Estad&iacute;stica descriptiva (<em>media, mediana, m&aacute;x, min</em>)</li>
+		<li id="Prediccion_futura">Predicci&oacute;n por Regresi&oacute;n (<em>forecasting</em>)</li>
+		<li id="Clasificacion_predictiva">Clasificaci&oacute;n predictiva (<em>Machine Learning</em>)</li>
+		<!--li id="Frecuencias_densidad_prob">Frecuencias (<em>Densidad Probabil&iacute;stica</em>)</li-->
+		<li id="delete">Eliminar</li>
+	  </ul>
+	</div>
+
+	<div id="context-menu-prediccion" class="context-menu">
+		<ul>
+		  <li id="Prediccion_lineal">Predicci&oacute;n por regresi&oacute;n lineal</li>
+		  <li id="Prediccion_nolineal">Predicci&oacute;n regresi&oacute;n no lineal</li>
+		  <li id="Prediccion_SeriesTemporales">Predicci&oacute;n por series temporales</li>
+		</ul>
+	</div>
+	
+	<div id="context-menu-clasificacion" class="context-menu">
+		<ul>
+		  <li id="Clasif_Arbol_decision">&Aacute;rbol de decisi&oacute;n</li>
+		  <li id="Clasif_Random_forest">Bosque aleatorio (<em>Random forest</em>)</li>
+		  <li id="Clasif_Regresion_logistica">Regresi&oacute;n log&iacute;stica</li>
+		  <li id="Clasif_SVM">M&aacute;quina de soporte vectorial (<em>SVM</em>)</li>
+		</ul>
+	</div>
+
+	<div id="context-menu-grafico" class="context-menu">
+	  <ul>
+		<li id="Generar_grafico_lineas">Gr&aacute;fico de líneas</li>
+		<li id="Generar_grafico_barras">Gr&aacute;fico de barras</li>
+		<li id="Generar_grafico_dispersion">Gr&aacute;fico de dispersi&oacute;n (<em>scatters</em>)</li>
+		<li id="Generar_grafico_pastel">Gr&aacute;fico de pastel</li>
+		<li id="Generar_grafico_histograma">Gr&aacute;fico de histograma</li>
+		<li id="Mostrar_grafico_actual">Mostrar gráfico actual</li>
+		<li id="delete">Eliminar</li>
+	  </ul>
+	</div>
+	
+	<div id="context-menu-informekpi" class="context-menu">
+	  <ul>
+		<ul>
+			<li id="Seleccionar_mis_plantillasKPI">Mis plantillas KPI</li>
+			<li id="Seleccionar_otras_plantillasKPI">Otras plantillas KPI</li>
+			<li id="delete">Eliminar</li>
+		  </ul>
+	  </ul>
+	</div>
+
+	<!-- Overlay y spinner -->
+    <div class="overlay" id="overlay">
+        <div class="spinner"></div>
+    </div>
+	<input type="file" id="inputArchivo" style="display: none" data-id-icono="">
+{% endblock %}

@@ -1,0 +1,33 @@
+<!-- Nuevos datos registrados -->
+{% extends 'principal.html' %}
+
+{% block scripts %}
+	<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+  <h1>Accediendo al BIG DATA Documents:</h1>
+  <form action="/login" method="post">
+  	<table width="90%">
+		<tr>
+			<td width="17%" align="right" valign="bottom">Usuario:</td>
+			<td width="79%" valign="bottom"><abbr title="Introduzca un nombre de usario &uacute;nico, de al menos 5 caracteres">
+		  <input type="text" name="username" id="username"></abbr></td>
+		</tr>
+		<tr>
+			<td align="right" valign="top">Contrase&ntilde;a:</td>
+			<td valign="top"><abbr title="Introduzca una contrase&ntilde;a de al menos 7 caracteres"><input type="password" name="password" id="password"></abbr></td>
+		</tr>
+		<tr>
+		  <td align="right" valign="top">&nbsp;</td>
+		  <td valign="top"><strong>&iquest;Eres nuevo aqu&iacute;? <a href="/registrarse">Registrate! </a></strong></td>
+	  </tr>
+		<tr>
+		  <td align="right" valign="top">&nbsp;</td>
+		  <td valign="top"><strong>&iquest;Se le olvid&oacute; la contrase&ntilde;a? <a href="#" onclick="enviar_correo_recuperacion()">Recuperalo!</a> </strong></td>
+	  </tr>
+	</table>
+	<br />
+	<button type="submit" class="custom-button">Enviar</button>
+  </form>
+{% endblock %}

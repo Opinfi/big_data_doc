@@ -1,0 +1,17 @@
+{% extends 'principal.html' %}
+{% block styles %}
+	<style type="text/css">
+		.sin_pendientes {font-family: "Times New Roman", Times, serif}
+	</style>
+{% endblock %}
+{% block scripts %}
+	<script src="{{ url_for('static', filename='js/administrar.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+	<h1>Administrar usuarios pendientes de registrarse:</h1>
+	<table width="100%" border="1" cellspacing="1">
+	  {{listado_noaprobados}}
+	</table>
+	<br />
+{% endblock %}

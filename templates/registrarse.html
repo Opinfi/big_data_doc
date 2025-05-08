@@ -1,0 +1,75 @@
+<!-- Registro de nuevos operarios y colegios -->
+{% extends 'principal.html' %}
+
+{% block scripts %}
+	<script src="{{ url_for('static', filename='js/registrarse.js') }}"></script>
+{% endblock %}
+
+{% block styles %}
+	<style>
+		.sel_user {
+			cursor: pointer;
+		}
+	</style>
+{% endblock %}
+
+{% block content %}
+	<h1>Registrar nuevos usuarios</h1>
+	<h2>Aqu&iacute; puede registrar sus datos:</h2>
+	<form method="POST" name="datos_usuario" action="/registrarse" enctype="multipart/form-data">
+		<table width="90%">
+			<tr>
+				<td width="20%" align="right">Nombres:</td>
+				<td width="30%"><abbr title="Introduzca sus nombres, empezando cada palabra en mayúscula y el resto minúsculas">
+					<input type="text" name="nombres" id="nombres" size="50" value=""></abbr></td>
+				<td width="15%" align="right">Apellidos:</td>
+				<td width="35%"><abbr title="Introduzca sus apellidos, empezando cada palabra en mayúscula y el resto minúsculas">
+					<input type="text" name="apellidos" id="apellidos" size="50" value=""></abbr></td>
+			</tr>
+			<tr>
+				<td align="right">&nbsp;</td>
+				<td>&nbsp;</td>
+				<td align="right">Foto:</td>
+				<td>
+					<input type="file" name="url_foto" id="url_foto" onChange="ChequearFoto()" accept=".gif, .jpg, .jpeg, .png, .bmp, .tiff">
+					<div class="file-upload-container">
+						<div class="custom-file-upload">
+							<input type="file" id="url_foto" name="url_foto" accept=".gif, .jpg, .jpeg, .png, .bmp, .tiff" value="" />
+							<label for="url_foto">Examinar</label>
+						</div>
+						<span id="file-name">No se ha seleccionado ningún archivo</span>					</div>				</td>
+			</tr>
+			<tr>
+			  <td align="right">Correo electr&oacute;nico: </td>
+			  <td><input type="text" name="email" id="email" size="50" value="" /></td>
+			  <td>&nbsp;</td>
+			  <td rowspan="4" valign="middle">
+				<div align="center">
+				<abbr title="Puede introducir una foto de su apariencia, pero no es obligatorio.">
+				<img id="img_foto" height="120px" src="{{ url_for('static', filename='fotos_usuarios/anonimo_black.png') }}">
+				</abbr>
+				</div></td>
+		  </tr>
+			<tr>
+				<td align="right" valign="bottom">Usuario:</td>
+				<td valign="bottom">
+						<abbr title="Introduzca un nombre de usuario &uacute;nico, de al menos 5 caracteres">
+						<input type="text" name="username" id="username" value=""></abbr>				</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td align="right" valign="top">Contrase&ntilde;a:</td>
+				<td valign="top"><abbr title="Introduzca una contrase&ntilde;a de al menos 7 caracteres">
+					<input type="password" name="password" id="password" value=""></abbr>				</td>
+				<td rowspan="2">&nbsp;</td>
+			</tr>
+			<tr>
+			  <td align="right" valign="top">Repetir Contrase&ntilde;a:</td>
+		      <td valign="top"><abbr title="Asegúre haber escrito correctamente su contraseña">
+					<input type="password" name="password2" id="password2" value=""></abbr></td>
+		  </tr>
+		</table>
+		<br />
+			<input type="button" value="Registrarse" class="custom-button" name="enviar" onClick="chequear_form()">
+</form>
+{% endblock %}

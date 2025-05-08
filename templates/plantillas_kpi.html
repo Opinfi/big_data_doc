@@ -1,0 +1,129 @@
+<!-- Insercion de Informes KPI por los gestores de informes -->
+{% extends 'principal.html' %}
+
+{% block scripts %}
+	<script src="{{ url_for('static', filename='js/plantillas_kpi.js') }}"></script>
+{% endblock %}
+
+{% block styles %}
+	<style type="text/css">
+		.contenedor_tabla {
+			max-height: 500px; /* Establece la altura maxima deseada */
+			overflow-y: scroll; /* Agrega el scroll vertical */
+		}
+		.estilo_encabezados {
+			color:#E1E1FF;
+		}
+		/* Estilos para el spinner y el overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .spinner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1001;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+	</style>
+{% endblock %}
+
+{% block content %}
+	<h1>Administraci&oacute;n de Plantillas para Informes KPI:</h1>
+	<h2>(<em>Key Performance Indicators</em>)</h2>
+	<table width="100%" border="0" cellspacing="1">
+		<tr>
+			<th colspan="4" bgcolor="#0077b6" class="estilo_encabezados" scope="col">Puede chequear las plantillas de otros y las suyas </th>
+		</tr>
+		<tr>
+			<th width="47%" bgcolor="#90e0ef" scope="col">Plantillas KPI de otros contribuyentes </th>
+			<th width="1%" scope="col">&nbsp;</th>
+			<th colspan="2" bgcolor="#90e0ef" scope="col">Plantillas KPI elaboradas por usted </th>
+		</tr>
+		<tr valign="top">
+			<td>
+				<div align="center" class="contenedor_tabla">
+				<table width="100%" border="1" cellspacing="0" id="tabla_lista_plantillas_otros">
+				<thead>
+					<tr bgcolor="#0033FF">
+						<th><span class="estilo_encabezados">Denominaci&oacute;n</span></th>
+						<th><span class="estilo_encabezados">Clase</span></th>
+					</tr>
+				</thead>
+				<tbody>
+					{{Lista_plantillas_otros}}
+				</tbody>
+				</table>
+				</div>
+			</td>
+			<td>&nbsp;</td>
+			<td colspan="2">
+				<div align="center" class="contenedor_tabla">
+				<table width="100%" border="1" cellspacing="0" id="tabla_lista_plantillas_propias">
+				<thead>
+					<tr bgcolor="#0033FF">
+						<th><span class="estilo_encabezados">Denominaci&oacute;n</span></th>
+						<th><span class="estilo_encabezados">Clase</span></th>
+					</tr>
+				</thead>
+				<tbody>
+					{{Lista_plantillas_propias}}
+				</tbody>
+				</table>
+				</div>	</td>
+		</tr>
+		<tr valign="middle">
+			<td><div align="center"></div></td>
+			<td><div align="center"></div></td>
+			<td width="27%"><div align="right"><strong>Archivo de nueva  Plantilla KPI:</strong></div></td>
+			<td width="25%">
+				<div class="file-upload-container">
+					<div class="custom-file-upload">
+						<input type="file" id="doc_plantilla" accept=".doc, .docx" value="" />
+						<label for="doc_plantilla">Examinar</label>
+					</div>
+					<span id="file-name">No se ha seleccionado ningún archivo</span>
+				</div>
+			</td>
+		</tr> 
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td><div align="right"><strong>Denominaci&oacute;n de la Plantilla:</strong></div></td>
+			<td><input type="text" size="35" id="denominacion" /></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td><div align="right"><strong>Clase de la Plantilla: </strong></div></td>
+			<td><input name="text" type="text" id="clase" size="35" /></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			<td><div align="right"></div></td>
+			<td><input type="button" class="custom-button" value="A&ntilde;adir Plantilla Nueva" onclick="Adicionar_Plantilla_Nueva()" /></td>
+		</tr>
+	</table>
+	<!-- Overlay y spinner -->
+	<div class="overlay" id="overlay">
+		<div class="spinner"></div>
+	</div>
+{% endblock %}

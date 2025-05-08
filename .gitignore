@@ -1,0 +1,9 @@
+# Ignorar entorno virtual y configuración de VS Code
+env/
+.vscode/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+.DS_Store
